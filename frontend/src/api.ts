@@ -1,4 +1,4 @@
-export const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8000";
+export const API = ""; // Same-origin API routes are routed to the FastAPI service by Vercel.
 
 export type Card =
   | { kind: "fields"; title?: string; rows: [string, string][] }

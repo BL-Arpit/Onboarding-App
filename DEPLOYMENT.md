@@ -1,28 +1,27 @@
-# Onboarding demo deployment
+# Deploy the Onboarding App as one Vercel project
 
-This repository is split into two hosted services:
+This repository uses Vercel Services to deploy the Vite frontend and FastAPI backend together under one Vercel project and one public domain. The backend is a Vercel Python Function (ASGI), **not a persistent Uvicorn process**. Vercel does not provide a single always-running Uvicorn machine.
 
-- `frontend/`: Vite + React, deployed to Vercel with **Root Directory** set to `frontend`.
-- `backend/`: FastAPI, deployed to Render using the root `render.yaml` blueprint.
+## Project layout
 
-## Vercel settings
+- `frontend/`: React + Vite static frontend.
+- `backend/`: FastAPI application, entrypoint `app.main:app`.
+- `vercel.toml`: declares both services and routes `/api/*` to FastAPI; all other paths go to Vite.
 
-- Framework preset: Vite
-- Root directory: `frontend`
-- Build command: `npm run build`
-- Output directory: `dist`
-- Environment variable: `VITE_API_URL=https://<your-render-service>.onrender.com`
+## Deploy
 
-Redeploy the frontend after setting `VITE_API_URL`.
+1. Commit and push the repository root (the directory containing `vercel.toml`) to GitHub.
+2. In Vercel, create/import **one** project from this repository.
+3. Set the project Root Directory to the repository root (`./`), not `frontend` or `backend`.
+4. Use the current Vercel CLI/Services support and deploy from the repository root: `vercel deploy --prod`. The Vercel Services configuration builds the two service roots.
+5. The same deployment domain serves `/` (frontend) and `/api/...` (FastAPI). No `VITE_API_URL` is required; the frontend calls same-origin `/api` routes.
 
-## Render settings
+If the dashboard's import flow does not recognize `vercel.toml` Services, update the Vercel CLI and confirm Vercel Services is available for the project. Do not set the project root to `frontend/`.
 
-Create the service from the repository using `render.yaml`. After the Vercel domain exists, set `CORS_ORIGINS` to the exact Vercel production origin (for example `https://your-project.vercel.app`, without a trailing slash), then redeploy the backend.
+## Local run
 
-Health check: `/api/health`.
+Install the Vercel CLI, then run `vercel dev` from the repository root. Vercel Services routes the frontend and backend through one local origin. This is not the same as one Uvicorn process.
 
-## Demo-only warning
+## Important storage limitation
 
-This is an unauthenticated demonstration app. Do not upload real employee information, identity documents, bank details, or confidential files. The backend uses local filesystem storage; the Render free service filesystem is ephemeral and demo records can be lost on restart/redeploy. Do not use this deployment for production or real employee onboarding.
-
-The original archive included local virtual environments, Node dependencies, environment files, and runtime employee data. Those are excluded from this deployment repository. Only source code, tests, templates, and deployment configuration are included.
+The backend currently writes employee JSON and generated Excel files to local disk (`DATA_DIR`, default `./data`). Vercel Functions have ephemeral local storage; files are not durable across invocations or deployments. Use a persistent database and object storage for employee records and uploaded documents before production use. Do not store real Aadhaar, PAN, bank, or confidential employee information without authentication, access controls, and secure storage.

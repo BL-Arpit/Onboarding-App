@@ -1,0 +1,21 @@
+[services.frontend]
+root = "frontend/"
+framework = "vite"
+buildCommand = "npm run build"
+outputDirectory = "dist"
+
+[services.backend]
+root = "backend/"
+entrypoint = "app.main:app"
+
+[[rewrites]]
+source = "/api"
+destination = { service = "backend" }
+
+[[rewrites]]
+source = "/api/(.*)"
+destination = { service = "backend" }
+
+[[rewrites]]
+source = "/(.*)"
+destination = { service = "frontend" }

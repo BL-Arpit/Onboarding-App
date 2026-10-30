@@ -1,6 +1,8 @@
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 from .chat import Chat
 from .config import get_settings
@@ -70,3 +72,26 @@ def download(format: str = "xlsx"):
         raise HTTPException(404, "No verified employees yet. Verify and confirm a batch first.")
     media = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" if format == "xlsx" else "application/vnd.ms-excel"
     return FileResponse(path, media_type=media, filename=f"master_employees.{format}")
+
+
+# Serve the built React/Vite frontend from the same FastAPI/Uvicorn process.
+# The Docker build copies frontend/dist into backend/app/static.
+_FRONTEND_DIR = Path(__file__).resolve().parent / "static"
+if _FRONTEND_DIR.is_dir():
+    _ASSETS_DIR = _FRONTEND_DIR / "assets"
+    if _ASSETS_DIR.is_dir():
+        app.mount("/assets", StaticFiles(directory=_ASSETS_DIR), name="frontend-assets")
+
+    @app.get("/", include_in_schema=False)
+    def frontend_index():
+        return FileResponse(_FRONTEND_DIR / "index.html")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    def frontend_routes(full_path: str):
+        # Keep unknown API endpoints as API 404s instead of returning index.html.
+        if full_path == "api" or full_path.startswith("api/"):
+            raise HTTPException(404, "API endpoint not found")
+        requested = (_FRONTEND_DIR / full_path).resolve()
+        if requested.is_file() and _FRONTEND_DIR.resolve() in requested.parents:
+            return FileResponse(requested)
+        return FileResponse(_FRONTEND_DIR / "index.html")
