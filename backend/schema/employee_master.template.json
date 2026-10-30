@@ -1,0 +1,72 @@
+{
+  "employee_id": "",
+  "status": "PENDING",
+  "full_name": "",
+  "email": "",
+  "phone": "",
+  "dob": "",
+  "age": null,
+  "gender": "",
+  "father_name": "",
+  "address": {
+    "full": "",
+    "pincode": ""
+  },
+  "aadhaar": {
+    "number_masked": "",
+    "hash": "",
+    "checksum_valid": null,
+    "name": "",
+    "dob": "",
+    "gender": "",
+    "address": ""
+  },
+  "pan": {
+    "number": "",
+    "name": "",
+    "father_name": "",
+    "dob": ""
+  },
+  "bank": {
+    "account_holder": "",
+    "account_number": "",
+    "ifsc": "",
+    "bank_name": "",
+    "branch": ""
+  },
+  "other": {
+    "description": "",
+    "reference": ""
+  },
+  "documents": {
+    "aadhaar": {
+      "files": [],
+      "source": "",
+      "filled_at": ""
+    },
+    "pan": {
+      "files": [],
+      "source": "",
+      "filled_at": ""
+    },
+    "bank": {
+      "files": [],
+      "source": "",
+      "filled_at": ""
+    },
+    "other": {
+      "files": [],
+      "source": "",
+      "filled_at": ""
+    }
+  },
+  "verification": {
+    "passed": null,
+    "checked_at": "",
+    "issues": [],
+    "warnings": []
+  },
+  "source": "",
+  "created_at": "",
+  "updated_at": ""
+}

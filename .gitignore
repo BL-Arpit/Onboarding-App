@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+
+# Node
+node_modules/
+dist/
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+
+# Runtime employee data and uploads
+backend/data/*
+!backend/data/.gitkeep
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
